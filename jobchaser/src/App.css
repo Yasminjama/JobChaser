@@ -1,0 +1,50 @@
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+h1 {
+  color: #5ba4a4;
+  margin-bottom: 40px;
+  font-size: 2rem;
+}
+
+/* JobList styling */
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* JobItem styling */
+.job-item {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #5ba4a4;
+  transition: transform 0.2s;
+}
+
+.job-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.job-item h2 {
+  color: #2b3939;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.job-item h3 {
+  color: #5ba4a4;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.job-item p {
+  color: #7b8e8e;
+  margin-bottom: 8px;
+}

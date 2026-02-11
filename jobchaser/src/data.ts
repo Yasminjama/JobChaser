@@ -2,7 +2,7 @@ export const jobs = [
     {
       id: 1,
       company: "Photosnap",
-      logo: "./images/photosnap.svg",
+      logo: "/src/assets/photosnap.svg",
       position: "Senior Frontend Developer",
       role: "Frontend",
       level: "Senior",
@@ -15,7 +15,7 @@ export const jobs = [
     {
       id: 2,
       company: "Manage",
-      logo: "../manage.svg",
+      logo: "/src/assets/manage.svg",
       position: "Fullstack Developer",
       role: "Fullstack",
       level: "Midweight",
@@ -28,7 +28,7 @@ export const jobs = [
     {
       id: 3,
       company: "Account",
-      logo: "./images/account.svg",
+      logo: "/src/assets/account.svg",
       position: "Junior Frontend Developer",
       role: "Frontend",
       level: "Junior",
@@ -41,7 +41,7 @@ export const jobs = [
     {
       id: 4,
       company: "MyHome",
-      logo: "./images/myhome.svg",
+      logo: "/src/assets/myhome.svg",
       position: "Junior Frontend Developer",
       role: "Frontend",
       level: "Junior",
@@ -54,7 +54,7 @@ export const jobs = [
     {
       id: 5,
       company: "Loop Studios",
-      logo: "./images/loop-studios.svg",
+      logo: "/src/assets/loop-studios.svg",
       position: "Software Engineer",
       role: "Fullstack",
       level: "Midweight",
@@ -67,7 +67,7 @@ export const jobs = [
     {
       id: 6,
       company: "FaceIt",
-      logo: "./images/faceit.svg",
+      logo: "/src/assets/faceit.svg",
       position: "Junior Backend Developer",
       role: "Backend",
       level: "Junior",
@@ -80,7 +80,7 @@ export const jobs = [
     {
       id: 7,
       company: "Shortly",
-      logo: "./images/shortly.svg",
+      logo: "/src/assets/shortly.svg",
       position: "Junior Developer",
       role: "Frontend",
       level: "Junior",
@@ -93,7 +93,7 @@ export const jobs = [
     {
       id: 8,
       company: "Insure",
-      logo: "./images/insure.svg",
+      logo: "/src/assets/insure.svg",
       position: "Junior Frontend Developer",
       role: "Frontend",
       level: "Junior",
@@ -106,7 +106,7 @@ export const jobs = [
     {
       id: 9,
       company: "Eyecam Co.",
-      logo: "./images/eyecam-co.svg",
+      logo: "/src/assets/eyecam-co.svg",
       position: "Full Stack Engineer",
       role: "Fullstack",
       level: "Midweight",
@@ -119,7 +119,7 @@ export const jobs = [
     {
       id: 10,
       company: "The Air Filter Company",
-      logo: "./images/the-air-filter-company.svg",
+      logo: "/src/assets/the-air-filter-company.svg",
       position: "Front-end Dev",
       role: "Frontend",
       level: "Junior",

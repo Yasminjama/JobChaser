@@ -12,7 +12,7 @@ interface JobItemProps {
 function JobItem({ job }: JobItemProps) {
     //Here we return to JSX that represents a job item.
     return (
-        <article>
+        <article className="job-item">
             {/* We can access the properties of the job object using dot notation. */}
             <img src={job.logo} alt={`${job.company} logo`} />
             <h2>{job.company}</h2>

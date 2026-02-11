@@ -15,7 +15,7 @@ function JobList({ jobs }: JobListProps) {
     }
 
     return (
-        <div>
+        <div className="job-list">
             {jobs.map((job) => (
                 <JobItem key={job.id} job={job} />
             ))}
