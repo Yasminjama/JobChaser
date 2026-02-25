@@ -272,6 +272,19 @@ h1 {
   background-color: #2b3939;
 }
 
+/* Error meddelanden för formulär */
+.error {
+  color: #ff4444;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-group input.error,
+.form-group input:invalid:not(:placeholder-shown) {
+  border-color: #ff4444;
+}
+
 /* Pagination */
 .pagination {
   display: flex;
