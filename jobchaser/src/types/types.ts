@@ -1,14 +1,22 @@
 export interface Job {
-    id: number;
-    company: string;
-    logo: string;
-    position: string;
-    role: string;
-    level: string;
-    postedAt: string;
-    contract: string;
-    location: string;
-    languages: string[];
-    tools: string[];
-} // [] means  array of strings, not just one string
+  id: string;
+  headline: string;
+  employer: {
+    name: string;
+    workplace?: string;
+  };
+  workplace_address: {
+    municipality: string;
+    region: string;
+  };
+  employment_type: {
+    label: string;
+  };
+  logo_url: string | null;
+  webpage_url: string;
+  application_deadline: string;
+  description: {
+    text: string;
+  };
+}
 

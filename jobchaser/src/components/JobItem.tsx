@@ -4,26 +4,24 @@
 import type { Job } from '../types/types';
 
 interface JobItemProps {
-    job: Job; // Job type imported from types.ts
+  job: Job;
 }
-
-
 
 function JobItem({ job }: JobItemProps) {
-    //Here we return to JSX that represents a job item.
-    return (
-        <article className="job-item">
-            {/* We can access the properties of the job object using dot notation. */}
-            <img src={job.logo} alt={`${job.company} logo`} />
-            <h2>{job.company}</h2>
-            <h3>{job.position}</h3>
-            <p>{job.postedAt} - {job.contract} - {job.location}</p>
-            <p>Role: {job.role}</p>
-            <p>Level: {job.level}</p>
-            <p>Languages: {job.languages.join(", ")}</p>
-            <p>Tools: {job.tools.join(", ")}</p>
-        </article>
-    );
+  return (
+    <article className="job-item">
+      {job.logo_url && <img src={job.logo_url} alt={`${job.employer.name} logo`} />}
+      <h2>{job.employer.name}</h2>
+      <h3>{job.headline}</h3>
+      <p>
+        {job.workplace_address.municipality} - {job.employment_type.label}
+      </p>
+      <p>Sista ansökningsdag: {new Date(job.application_deadline).toLocaleDateString('sv-SE')}</p> {/* Convert the application deadline to a more readable format */}
+      <a href={job.webpage_url} target="_blank" rel="noopener noreferrer">
+        Läs mer →
+      </a>
+    </article>
+  );
 }
 
-export default JobItem; 
+export default JobItem;
