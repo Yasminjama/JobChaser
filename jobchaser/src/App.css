@@ -1,3 +1,37 @@
+/* Dark mode variables och styling */
+body.light {
+  --bg-color: #effafa;
+  --text-color: #2b3939;
+  --card-bg: white;
+  --header-bg: #2b3939;
+  --header-text: white;
+  --border-color: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body.dark {
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --card-bg: #2b2b2b;
+  --header-bg: #0a0a0a;
+  --header-text: #e0e0e0;
+  --border-color: #404040;
+  --shadow: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Reset och grundläggande styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* Container för hela appen */
 .app-container {
   max-width: 1400px;
@@ -13,6 +47,66 @@ h1 {
   text-align: center;
 }
 
+/* Header & Navigation */
+.header {
+  background-color: var(--header-bg);
+  box-shadow: 0 2px 8px var(--shadow);
+  margin-bottom: 40px;
+}
+
+.header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo h2 {
+  color: #5ba4a4;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.logo {
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.nav a {
+  color: var(--header-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.nav a:hover {
+  color: #5ba4a4;
+  background-color: rgba(91, 164, 164, 0.1);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  transition: transform 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.2);
+}
+
 /* Filter-sektion */
 .filters {
   display: flex;
@@ -24,12 +118,14 @@ h1 {
 .filters input,
 .filters select {
   padding: 14px 16px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 1rem;
   flex: 1;
   min-width: 200px;
   transition: border-color 0.2s;
+  background-color: var(--card-bg);
+  color: var(--text-color);
 }
 
 .filters input:focus,
@@ -45,7 +141,8 @@ h1 {
 
 /* Antal jobb text */
 .app-container > p {
-  color: #7b8e8e;
+  color: var(--text-color);
+  opacity: 0.8;
   margin-bottom: 20px;
   font-size: 0.95rem;
 }
@@ -59,10 +156,10 @@ h1 {
 
 /* JobItem - Jobbkort */
 .job-item {
-  background: white;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow);
   border-left: 5px solid #5ba4a4;
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
@@ -72,7 +169,7 @@ h1 {
 
 .job-item:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 16px var(--shadow);
 }
 
 .job-item img {
@@ -84,7 +181,7 @@ h1 {
 }
 
 .job-item h2 {
-  color: #2b3939;
+  color: var(--text-color);
   font-size: 1rem;
   margin-bottom: 4px;
   font-weight: 500;
@@ -99,7 +196,8 @@ h1 {
 }
 
 .job-item p {
-  color: #7b8e8e;
+  color: var(--text-color);
+  opacity: 0.8;
   margin-bottom: 8px;
   font-size: 0.9rem;
   line-height: 1.5;
@@ -118,6 +216,95 @@ h1 {
 .job-item a:hover {
   color: #2b3939;
   text-decoration: underline;
+}
+
+/* Form styling */
+.auth-form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 30px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px var(--shadow);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #5ba4a4;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #5ba4a4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.auth-form button:hover {
+  background-color: #2b3939;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  background-color: #5ba4a4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #2b3939;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.page-info {
+  color: var(--text-color);
+  font-weight: 500;
 }
 
 /* Responsive design */
@@ -139,4 +326,3 @@ h1 {
     width: 100%;
   }
 }
-
