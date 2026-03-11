@@ -12,12 +12,12 @@ import { ThemeProvider, useTheme } from './context/ThemeContext';
 function AppContent() {
   const { theme } = useTheme();
   
-  // Applicera tema på body-elementet
+  // Applicera tema på body elementet
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
   
-  //Browser router aktiverar routing i hela appen.
+  //Browser router AKTIVERAR routing i hela appen.
   // "/" redirictar till /jobs. 
   return (
     <BrowserRouter> 

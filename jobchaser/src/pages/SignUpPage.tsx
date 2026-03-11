@@ -19,7 +19,7 @@ function SignUpPage() {
   // Körs när formuläret skickas (efter validering)
   const onSubmit = (data: SignUpFormData) => {
     console.log('Registreringsdata:', data);
-    alert(`Välkommen ${data.name}! (Detta är bara en demo)`);
+    alert(`Välkommen ${data.name}!`);
   };
   
   return (
