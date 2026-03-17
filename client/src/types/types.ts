@@ -1,3 +1,4 @@
+//Job interface
 export interface Job {
   id: string;
   headline: string;
@@ -18,5 +19,12 @@ export interface Job {
   description: {
     text: string;
   };
+}
+
+//Pagination props interface
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
