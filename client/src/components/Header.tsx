@@ -1,4 +1,5 @@
-// Header - Navigationskomponent som visas på alla sidor
+// Header 
+// Navigationskomponent som visas på alla sidor
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 

@@ -1,4 +1,5 @@
-// SignUpPage - Registreringsformulär för nya användare med validering
+// SignUpPage 
+// Registreringsformulär för nya användare med validering
 import { useForm } from 'react-hook-form';
 
 // Interface för formulärdata

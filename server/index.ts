@@ -2,7 +2,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import pool from './db';
 import usersRouter from './routes/users'; 
 import jobApplicationsRouter from './routes/jobApplications'; 
 
@@ -16,6 +15,11 @@ const PORT = process.env.PORT || 3000;
 //Middleware
 app.use(cors()); //tillåter resquest från frontend
 app.use(express.json()); //parsar JSON i request body
+
+//Test route for PATCH requests. 
+app.patch('/test', (req: Request, res: Response) => {
+  res.json({ message: 'PATCH works' });
+});
 
 //Routes 
 app.use('/users', usersRouter); //Alla requests till `/users` går till usersRouter: 

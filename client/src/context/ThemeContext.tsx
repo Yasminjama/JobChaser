@@ -1,4 +1,5 @@
-// ThemeContext - Global state för dark/light mode som kan användas överallt i appen
+// ThemeContext 
+// Global state för dark/light mode som kan användas överallt i appen
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 

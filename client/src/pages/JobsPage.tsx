@@ -44,7 +44,7 @@ function JobsPage () {
       job.headline.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.employer.name.toLowerCase().includes(searchTerm.toLowerCase());
     
-      // Om en region är vald, kontrollera att jobbets region matchar den valda regionen. Om ingen region är vald, inkludera alla jobb.
+      // Om en region är vald kontrollera att jobbets region matchar den valda regionen. Om ingen region är vald, inkludera alla jobb.
     const matchesRegion = selectedRegion 
       ? job.workplace_address.region === selectedRegion 
       : true;

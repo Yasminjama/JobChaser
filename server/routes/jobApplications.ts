@@ -1,108 +1,142 @@
 import { Router, Request, Response } from 'express';
-import pool from '../db';
+import { db } from '../db/index';
+import { jobApplications } from '../db/schema';
+import { eq } from 'drizzle-orm';
 
 const router = Router();
 
-// GET /job-applications - Hämta alla ansökningar
+// GET /job-applications för att hämta alla ansökningar
+
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM job_applications ORDER BY created_at DESC'
-    );
-    res.json(result.rows);
+    const allApplications = await db.select().from(jobApplications);
+    res.json(allApplications);
   } catch (error) {
     console.error('Error fetching job applications:', error);
     res.status(500).json({ error: 'Failed to fetch job applications' });
   }
 });
 
-// GET /job-applications/:id - Hämta en specifik ansökan
+// GET /job-applications/:id för att hämta en specifik ansökan
 router.get('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const result = await pool.query(
-      'SELECT * FROM job_applications WHERE id = $1',
-      [id]
-    );
 
-    if (result.rows.length === 0) {
+    const application = await db.select().from(jobApplications).where(eq(jobApplications.id, Number(id)));
+
+    if (application.length === 0) {
       return res.status(404).json({ error: 'Job application not found' });
     }
 
-    res.json(result.rows[0]);
+    res.json(application[0]);
   } catch (error) {
     console.error('Error fetching job application:', error);
     res.status(500).json({ error: 'Failed to fetch job application' });
   }
 });
 
-// POST /job-applications - Skapa ny ansökan
+// POST /job-applications för att skapa en ny ansökan
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { user_id, job_title, company, status, applied_date, notes } = req.body;
+   const { userId, jobTitle, company, status, appliedDate, notes } = req.body;
+    console.log('Request body:', req.body);
 
-    if (!user_id || !job_title || !company || !applied_date) {
-      return res.status(400).json({ error: 'user_id, job_title, company and applied_date are required' });
+    if (!userId || !jobTitle || !company || !appliedDate) {
+      return res.status(400).json({ error: 'userId, jobTitle, company and appliedDate are required' });
     }
 
-    const result = await pool.query(
-      `INSERT INTO job_applications (user_id, job_title, company, status, applied_date, notes)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
-      [user_id, job_title, company, status || 'applied', applied_date, notes || null]
-    );
+    const newApplication = await db.insert(jobApplications).values({
+      userId,
+      jobTitle,
+      company,
+      status: status || 'applied',
+      appliedDate,
+      notes: notes || null,
+    }).returning();
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(newApplication[0]);
   } catch (error) {
     console.error('Error creating job application:', error);
     res.status(500).json({ error: 'Failed to create job application' });
   }
 });
 
-// PUT /job-applications/:id - Uppdatera en ansökan
+// PUT /job-applications/:id  för att uppdatera en ansökan
 router.put('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { job_title, company, status, applied_date, notes } = req.body;
+    const { jobTitle, company, status, appliedDate, notes } = req.body;
 
-    if (!job_title || !company || !applied_date) {
-      return res.status(400).json({ error: 'job_title, company and applied_date are required' });
+    if (!jobTitle || !company || !appliedDate) {
+      return res.status(400).json({ error: 'jobTitle, company and appliedDate are required' });
     }
 
-    const result = await pool.query(
-      `UPDATE job_applications
-       SET job_title = $1, company = $2, status = $3, applied_date = $4, notes = $5
-       WHERE id = $6
-       RETURNING *`,
-      [job_title, company, status, applied_date, notes, id]
-    );
+    const updatedApplication = await db.update(jobApplications).set({
+      jobTitle,
+      company,
+      status,
+      appliedDate,
+      notes,
+    }).where(eq(jobApplications.id, Number(id))).returning();
 
-    if (result.rows.length === 0) {
+    if (updatedApplication.length === 0) {
       return res.status(404).json({ error: 'Job application not found' });
     }
 
-    res.json(result.rows[0]);
+    res.json(updatedApplication[0]);
   } catch (error) {
     console.error('Error updating job application:', error);
     res.status(500).json({ error: 'Failed to update job application' });
   }
 });
 
-// DELETE /job-applications/:id - Ta bort en ansökan
+// PATCH /job-applications/:id för att uppdatera enskilda fält
+router.patch('/:id', async (req: Request, res: Response) => {
+  console.log('PATCH route hit', req.params, req.body);
+  try {
+    const { id } = req.params;
+    const { jobTitle, company, status, appliedDate, notes } = req.body;
+
+    const fieldsToUpdate: Partial<typeof jobApplications.$inferInsert> = {};
+    if (jobTitle !== undefined) fieldsToUpdate.jobTitle = jobTitle;
+    if (company !== undefined) fieldsToUpdate.company = company;
+    if (status !== undefined) fieldsToUpdate.status = status;
+    if (appliedDate !== undefined) fieldsToUpdate.appliedDate = appliedDate;
+    if (notes !== undefined) fieldsToUpdate.notes = notes;
+
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const updatedApplication = await db
+      .update(jobApplications)
+      .set(fieldsToUpdate)
+      .where(eq(jobApplications.id, Number(id)))
+      .returning();
+
+    if (updatedApplication.length === 0) {
+      return res.status(404).json({ error: 'Job application not found' });
+    }
+
+    res.json(updatedApplication[0]);
+  } catch (error) {
+    console.error('Error patching job application:', error);
+    res.status(500).json({ error: 'Failed to update job application' });
+  }
+});
+
+// DELETE /job-applications/:id för att ta bort en ansökan
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const result = await pool.query(
-      'DELETE FROM job_applications WHERE id = $1 RETURNING *',
-      [id]
-    );
+    const deletedApplication = await db.delete(jobApplications).where(eq(jobApplications.id, Number(id))).returning();
 
-    if (result.rows.length === 0) {
+    if (deletedApplication.length === 0) {
       return res.status(404).json({ error: 'Job application not found' });
     }
 
-    res.json({ message: 'Job application deleted', jobApplication: result.rows[0] });
+    res.json({ message: 'Job application deleted', jobApplication: deletedApplication[0] });
   } catch (error) {
     console.error('Error deleting job application:', error);
     res.status(500).json({ error: 'Failed to delete job application' });
