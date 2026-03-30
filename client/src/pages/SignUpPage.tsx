@@ -1,15 +1,14 @@
 // SignUpPage 
 // Registreringsformulär för nya användare med validering
+// SignUpPage 
+// Registreringsformulär för nya användare med validering
 import { useForm } from 'react-hook-form';
-
-// Interface för formulärdata
-interface SignUpFormData {
-  name: string;
-  email: string;
-  password: string;
-}
+import { useNavigate } from 'react-router-dom';
+import type { SignUpFormData } from '../types/types';
 
 function SignUpPage() {
+  const navigate = useNavigate();
+
   // React Hook Form setup
   const { 
     register,           // Registrera inputs
@@ -17,10 +16,30 @@ function SignUpPage() {
     formState: { errors } // Valideringsfel
   } = useForm<SignUpFormData>();
   
-  // Körs när formuläret skickas (efter validering)
-  const onSubmit = (data: SignUpFormData) => {
-    console.log('Registreringsdata:', data);
-    alert(`Välkommen ${data.name}!`);
+  // detta körs när formuläret skickas och skickar data till backend
+  const onSubmit = async (data: SignUpFormData) => {
+    try {
+      const response = await fetch('http://localhost:3000/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Något gick fel');
+        return;
+      }
+
+      alert(`Välkommen ${data.name}! Ditt konto har skapats.`);
+      navigate('/signin'); // navigera till signin efter registrering
+    } catch (error) {
+      console.error('Signup error:', error);
+      alert('Kunde inte ansluta till servern');
+    }
   };
   
   return (
@@ -29,7 +48,7 @@ function SignUpPage() {
       
       <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         
-        {/* Namn */}
+        {/* namn */}
         <div className="form-group">
           <label htmlFor="name">Namn</label>
           <input 
@@ -84,6 +103,12 @@ function SignUpPage() {
         </div>
         
         <button type="submit">Registrera</button>
+        <br />
+        <br />
+        {/* Länk till inloggningssidan */}
+        <p>
+          Har du redan ett konto? <a href="/signin">Logga in här</a>
+        </p>
       </form>
     </div>
   );

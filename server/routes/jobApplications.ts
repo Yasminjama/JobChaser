@@ -1,15 +1,21 @@
+// jobApplications.ts 
+// CRUD routes skyddade routes kräver JWT-token via authMiddleware
+
 import { Router, Request, Response } from 'express';
 import { db } from '../db/index';
 import { jobApplications } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import authMiddleware, { AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-// GET /job-applications för att hämta alla ansökningar
-
-router.get('/', async (req: Request, res: Response) => {
+// GET /job-applications hämta alla ansökningar (skyddad och visar bara egna)
+router.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-    const allApplications = await db.select().from(jobApplications);
+    const allApplications = await db
+      .select()
+      .from(jobApplications)
+      .where(eq(jobApplications.userId, req.user!.id));
     res.json(allApplications);
   } catch (error) {
     console.error('Error fetching job applications:', error);
@@ -17,15 +23,23 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// GET /job-applications/:id för att hämta en specifik ansökan
-router.get('/:id', async (req: Request, res: Response) => {
+// GET /job-applications/:id hämta en specifik ansökan (skyddad och visar bara egna)
+router.get('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
-    const application = await db.select().from(jobApplications).where(eq(jobApplications.id, Number(id)));
+    const application = await db
+      .select()
+      .from(jobApplications)
+      .where(eq(jobApplications.id, Number(id)));
 
     if (application.length === 0) {
       return res.status(404).json({ error: 'Job application not found' });
+    }
+
+    // Kontrollera att ansökan tillhör den inloggade användaren(kollar om userId matchar användaren)
+    if (application[0].userId !== req.user!.id) {
+      return res.status(403).json({ error: 'Not authorized to view this application' });
     }
 
     res.json(application[0]);
@@ -35,18 +49,19 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// POST /job-applications för att skapa en ny ansökan
-router.post('/', async (req: Request, res: Response) => {
+// POST /job-applications skapa ny ansökan (skyddad och kräver token)
+// userId hämtas automatiskt från token behöver inte skickas i body
+router.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
-   const { userId, jobTitle, company, status, appliedDate, notes } = req.body;
+    const { jobTitle, company, status, appliedDate, notes } = req.body;
     console.log('Request body:', req.body);
 
-    if (!userId || !jobTitle || !company || !appliedDate) {
-      return res.status(400).json({ error: 'userId, jobTitle, company and appliedDate are required' });
+    if (!jobTitle || !company || !appliedDate) {
+      return res.status(400).json({ error: 'jobTitle, company and appliedDate are required' });
     }
 
     const newApplication = await db.insert(jobApplications).values({
-      userId,
+      userId: req.user!.id, //och här hämtas automatiskt från JWT-token
       jobTitle,
       company,
       status: status || 'applied',
@@ -61,8 +76,8 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// PUT /job-applications/:id  för att uppdatera en ansökan
-router.put('/:id', async (req: Request, res: Response) => {
+// PUT /job-applications/:id uppdatera en ansökan (skyddad och kräver token)
+router.put('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { jobTitle, company, status, appliedDate, notes } = req.body;
@@ -90,8 +105,8 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// PATCH /job-applications/:id för att uppdatera enskilda fält
-router.patch('/:id', async (req: Request, res: Response) => {
+// PATCH /job-applications/:id uppdatera enskilda fält (skyddad och kräver token)
+router.patch('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   console.log('PATCH route hit', req.params, req.body);
   try {
     const { id } = req.params;
@@ -125,8 +140,8 @@ router.patch('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// DELETE /job-applications/:id för att ta bort en ansökan
-router.delete('/:id', async (req: Request, res: Response) => {
+// DELETE /job-applications/:id ta bort en ansökan (skyddad och kräver token)
+router.delete('/:id', authMiddleware, async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 

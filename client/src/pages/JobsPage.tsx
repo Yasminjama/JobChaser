@@ -1,15 +1,21 @@
-//Vi flyttar App.tsx nu till JobsPage.tsx. App.tsx kommer nu fungera som router och rendera JobsPage när vi är på rätt path.
+// Vi flyttar App.tsx nu till JobsPage.tsx. App.tsx kommer nu fungera som router och rendera JobsPage när vi är på rätt path.
 import { useState, useEffect } from 'react';
 import JobList from "../components/JobList";
+import FilterPanel from '../components/filterPanel';
+import Pagination from '../components/Pagination';
+import { useFilterStore } from '../stores/filterStore';
 import type { Job } from '../types/types';
 
-function JobsPage () {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState(""); 
+const JOBS_PER_PAGE = 12; 
+
+function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Hämta filter från storen istället för lokalt state
+  const { textFilter, regionFilter, employmentType, requiresExperience } = useFilterStore();
 
   // useEffect används för att hantera sidoeffekter i React-komponenter, som att hämta data från en API.
   // I det här fallet används useEffect för att hämta jobbdata när komponenten först renderas.
@@ -17,7 +23,7 @@ function JobsPage () {
     const fetchJobs = async () => {
       try {
         setLoading(true);
-        // Hämta 100 jobb utan regions-filter från 
+        // Hämta 100 jobb utan regions-filter
         const response = await fetch('https://jobsearch.api.jobtechdev.se/search?limit=100');
         
         if (!response.ok) {
@@ -37,61 +43,70 @@ function JobsPage () {
     
     fetchJobs();
   }, []); // Hämta bara en gång
-  
-  // Filtrera jobb baserat på sökterm OCH vald region
+
+  // Filtrera jobb baserat på alla filter från storen
   const filteredJobs = jobs.filter((job) => {
-    const matchesSearch = 
-      job.headline.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.employer.name.toLowerCase().includes(searchTerm.toLowerCase());
-    
-      // Om en region är vald kontrollera att jobbets region matchar den valda regionen. Om ingen region är vald, inkludera alla jobb.
-    const matchesRegion = selectedRegion 
-      ? job.workplace_address.region === selectedRegion 
+    // Fritext sökning på titel och företagsnamn
+    const matchesText =
+      job.headline.toLowerCase().includes(textFilter.toLowerCase()) ||
+      job.employer.name.toLowerCase().includes(textFilter.toLowerCase());
+
+    // Om en region, anställningstyp eller erfarenhetskrav är valt, kontrollera att jobbet matchar.
+    const matchesRegion = regionFilter
+      ? job.workplace_address.region === regionFilter
       : true;
+
     
-    return matchesSearch && matchesRegion;
+    const matchesEmploymentType = employmentType
+      ? job.employment_type?.label === employmentType
+      : true;
+
+    
+    const matchesExperience = requiresExperience !== ''
+      ? String(job.experience_required) === requiresExperience
+      : true;
+
+    return matchesText && matchesRegion && matchesEmploymentType && matchesExperience;
   });
-  
+
+  //räkna ut antal sidor baserat på filtrerade jobb
+  const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
+
+  //hämta bara de jobb som ska visas på den aktuella sidan
+  const paginatedJobs = filteredJobs.slice(
+    (currentPage - 1) * JOBS_PER_PAGE,
+    currentPage * JOBS_PER_PAGE
+  );
+
+  //När filter ändras gå tillbaka till sida 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [textFilter, regionFilter, employmentType, requiresExperience]);
+
+
   if (loading) {
     return <div className="app-container"><p>Laddar jobb...</p></div>;
   }
-  
+
   if (error) {
     return <div className="app-container"><p>{error}</p></div>;
   }
-  
+
   return (
     <div className="app-container">
       <h1>JobChaser</h1>
-      
-      <div className="filters">
-        <input
-          type="text"
-          placeholder="Sök efter jobb..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        
-        <select 
-          value={selectedRegion} 
-          onChange={(e) => setSelectedRegion(e.target.value)}
-        >
-          <option value="">Alla regioner</option>
-          <option value="Stockholms län">Stockholms län</option>
-          <option value="Västra Götalands län">Västra Götalands län</option>
-          <option value="Skåne län">Skåne län</option>
-          <option value="Uppsala län">Uppsala län</option>
-          <option value="Östergötlands län">Östergötlands län</option>
-          <option value="Hallands län">Hallands län</option>
-          <option value="Jönköpings län">Jönköpings län</option>
-          <option value="Dalarnas län">Dalarnas län</option>
-          <option value="Södermanlands län">Södermanlands län</option>
-        </select>
-      </div>
-      
+
+      {/* FilterPanel ersätter de gamla inputsen och hämtar filter från filterStore */}
+      <FilterPanel />
+
       <p>Visar {filteredJobs.length} jobb</p>
-      
-      <JobList jobs={filteredJobs} />
+
+      <JobList jobs={paginatedJobs} />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

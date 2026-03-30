@@ -7,6 +7,7 @@ import JobsPage from './pages/JobsPage';
 import SignUpPage from './pages/SignUpPage';
 import SignInPage from './pages/SignInPage';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Inre komponent som använder theme
 function AppContent() {
@@ -24,7 +25,14 @@ function AppContent() {
       <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/jobs" replace />} />
-        <Route path="/jobs" element={<JobsPage />} />
+        <Route
+          path ="/jobs"
+          element ={
+            <ProtectedRoute> {/*skyddar JobsPage*/}
+              <JobsPage />
+            </ProtectedRoute>
+          }
+       />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/signin" element={<SignInPage />} />
       </Routes>

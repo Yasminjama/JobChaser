@@ -1,25 +1,47 @@
 // SignInPage 
-// inloggningsformulär för befintliga användare med validering
+// Inloggningsformulär för befintliga användare med validering
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import type { SignInFormData } from '../types/types';
+import { useAuthStore } from '../stores/authStore';
 
-// Interface för formulärdata
-interface SignInFormData {
-  email: string;
-  password: string;
-}
 
 function SignInPage() {
-  // React Hook Form setup
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login); //Hämtar login action från authStore. 
+
+  // react Hook Form setup
   const { 
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<SignInFormData>();
   
-  // Körs när formuläret skickas (efter validering)
-  const onSubmit = (data: SignInFormData) => {
-    console.log('Inloggningsdata:', data);
-    alert(`Välkommen tillbaka! (Detta är bara en demo)`);
+  // detta körs när formuläret skickas och skickar data till backend
+  const onSubmit = async (data: SignInFormData) => {
+    try {
+      const response = await fetch('http://localhost:3000/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.error || 'Något gick fel');
+        return;
+      }
+
+      // Spara token och användardata i authStore så att resten av appen vet att vi är inloggade
+      login(result.user, result.token); // Bytte ut localStorage mot authStore. 
+      navigate('/'); // Navigera till startsidan efter inloggning
+    } catch (error) {
+      console.error('Signin error:', error);
+      alert('Kunde inte ansluta till servern');
+    }
   };
   
   return (
@@ -61,6 +83,13 @@ function SignInPage() {
         </div>
         
         <button type="submit">Logga in</button>
+        
+        {/* Länk till registreringssidan */}
+        <br />
+        <br />
+        <p>
+          Har du inget konto? <a href="/signup">Registrera dig här</a>
+        </p>
       </form>
     </div>
   );
