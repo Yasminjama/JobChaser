@@ -4,6 +4,7 @@ import JobList from "../components/JobList";
 import FilterPanel from '../components/filterPanel';
 import Pagination from '../components/Pagination';
 import { useFilterStore } from '../stores/filterStore';
+import { useJobApplicationStore } from '../stores/jobApplicationStore';
 import type { Job } from '../types/types';
 
 const JOBS_PER_PAGE = 12; 
@@ -16,6 +17,9 @@ function JobsPage() {
 
   // Hämta filter från storen istället för lokalt state
   const { textFilter, regionFilter, employmentType, requiresExperience } = useFilterStore();
+
+  // Hämta sparade ansökningar från backend när komponenten laddas
+  const fetchApplications = useJobApplicationStore((state) => state.fetchApplications);
 
   // useEffect används för att hantera sidoeffekter i React-komponenter, som att hämta data från en API.
   // I det här fallet används useEffect för att hämta jobbdata när komponenten först renderas.
@@ -44,9 +48,14 @@ function JobsPage() {
     fetchJobs();
   }, []); // Hämta bara en gång
 
+  // Hämta sparade ansökningar från backend när komponenten laddas
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
+
   // Filtrera jobb baserat på alla filter från storen
   const filteredJobs = jobs.filter((job) => {
-    // Fritext sökning på titel och företagsnamn
+    // Fritextsökning på titel och företagsnamn
     const matchesText =
       job.headline.toLowerCase().includes(textFilter.toLowerCase()) ||
       job.employer.name.toLowerCase().includes(textFilter.toLowerCase());
@@ -56,12 +65,10 @@ function JobsPage() {
       ? job.workplace_address.region === regionFilter
       : true;
 
-    
     const matchesEmploymentType = employmentType
       ? job.employment_type?.label === employmentType
       : true;
 
-    
     const matchesExperience = requiresExperience !== ''
       ? String(job.experience_required) === requiresExperience
       : true;
@@ -69,20 +76,19 @@ function JobsPage() {
     return matchesText && matchesRegion && matchesEmploymentType && matchesExperience;
   });
 
-  //räkna ut antal sidor baserat på filtrerade jobb
+  // Räkna ut antal sidor baserat på filtrerade jobb
   const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
 
-  //hämta bara de jobb som ska visas på den aktuella sidan
+  // Hämta bara de jobb som ska visas på den aktuella sidan
   const paginatedJobs = filteredJobs.slice(
     (currentPage - 1) * JOBS_PER_PAGE,
     currentPage * JOBS_PER_PAGE
   );
 
-  //När filter ändras gå tillbaka till sida 1
+  // När filter ändras, gå tillbaka till sida 1
   useEffect(() => {
     setCurrentPage(1);
   }, [textFilter, regionFilter, employmentType, requiresExperience]);
-
 
   if (loading) {
     return <div className="app-container"><p>Laddar jobb...</p></div>;
@@ -102,11 +108,15 @@ function JobsPage() {
       <p>Visar {filteredJobs.length} jobb</p>
 
       <JobList jobs={paginatedJobs} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+
+      {/* Visa pagination bara om det finns mer än en sida */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 }

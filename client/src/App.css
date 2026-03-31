@@ -265,6 +265,30 @@ h1 {
   text-decoration: underline;
 }
 
+/* Spara ansökan-knapp på jobbkort */
+.save-btn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: #5ba4a4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: #2b3939;
+}
+
+.save-btn.saved {
+  background-color: #4caf50;
+  cursor: default;
+}
+
 /* Form styling */
 .auth-form {
   max-width: 400px;
