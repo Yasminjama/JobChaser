@@ -6,6 +6,7 @@ import Header from './components/Header';
 import JobsPage from './pages/JobsPage';
 import SignUpPage from './pages/SignUpPage';
 import SignInPage from './pages/SignInPage';
+import MyApplicationsPage from './pages/MyApplicationsPage.tsx'; 
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -18,21 +19,22 @@ function AppContent() {
     document.body.className = theme;
   }, [theme]);
   
-  //Browser router AKTIVERAR routing i hela appen.
-  // "/" redirictar till /jobs. 
+  // BrowserRouter AKTIVERAR routing i hela appen.
+  // "/" redirectar till /jobs.
   return (
     <BrowserRouter> 
       <Header />
       <Routes>
         <Route path="/" element={<Navigate to="/jobs" replace />} />
+        <Route path="/jobs" element={<JobsPage />} />
         <Route
-          path ="/jobs"
-          element ={
-            <ProtectedRoute> {/*skyddar JobsPage*/}
-              <JobsPage />
+          path="/my-applications"
+          element={
+            <ProtectedRoute> 
+              <MyApplicationsPage />
             </ProtectedRoute>
           }
-       />
+        />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/signin" element={<SignInPage />} />
       </Routes>

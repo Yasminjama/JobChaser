@@ -14,7 +14,7 @@ export interface JobApplication {
   user_id: number;
   job_title: string;
   company: string;
-  status: 'applied' | 'interview' | 'rejected' | 'accepted';
+  status: 'Applied' | 'Interview' | 'Rejected' | 'Accepted';
   applied_date: Date;
   notes?: string;
 }
@@ -31,7 +31,7 @@ export interface CreateJobApplicationInput {
   user_id: number;
   job_title: string;
   company: string;
-  status: 'applied' | 'interview' | 'rejected' | 'accepted';
+  status: 'Applied' | 'Interview' | 'Rejected' | 'Accepted';
   applied_date: Date;
   notes?: string;
 }

@@ -125,7 +125,7 @@ h1 {
   transform: scale(1.2);
 }
 
-/* Filter-sektion */
+/* Filter sektion */
 .filters {
   display: flex;
   gap: 16px;

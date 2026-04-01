@@ -65,6 +65,17 @@ export interface FilterStore {
   clearFilters: () => void;
 }
 
+// Typen för en jobbsökans ansökan som sparas i backend och visas på "Mina ansökningar" sidan
+export interface Application {
+  id: number;
+  jobTitle: string;
+  company: string;
+  status: string;
+  appliedDate: string;
+  notes: string | null;
+}
+
+
 //Pagination props interface
 export interface PaginationProps {
   currentPage: number;

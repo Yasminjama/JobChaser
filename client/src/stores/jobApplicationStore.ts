@@ -57,7 +57,7 @@ export const useJobApplicationStore = create<JobApplicationStore>((set) => ({
         body: JSON.stringify({
           jobTitle,
           company,
-          status: 'applied',
+          status: 'Applied',
           appliedDate: new Date().toISOString().split('T')[0],
           notes: `JobTech ID: ${jobId}`
         })

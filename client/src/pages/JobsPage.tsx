@@ -1,7 +1,7 @@
 // Vi flyttar App.tsx nu till JobsPage.tsx. App.tsx kommer nu fungera som router och rendera JobsPage när vi är på rätt path.
 import { useState, useEffect } from 'react';
 import JobList from "../components/JobList";
-import FilterPanel from '../components/filterPanel';
+import FilterPanel from '../components/FilterPanel';
 import Pagination from '../components/Pagination';
 import { useFilterStore } from '../stores/filterStore';
 import { useJobApplicationStore } from '../stores/jobApplicationStore';
