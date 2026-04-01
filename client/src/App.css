@@ -52,6 +52,7 @@ h1 {
   background-color: var(--header-bg);
   box-shadow: 0 2px 8px var(--shadow);
   margin-bottom: 40px;
+  position: relative; /* behövs för att nav ska positioneras rätt på mobil */
 }
 
 .header-container {
@@ -125,7 +126,42 @@ h1 {
   transform: scale(1.2);
 }
 
-/* Filter sektion */
+/* Hamburger-knapp — dold på desktop */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 200;
+}
+
+.hamburger-line {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: var(--header-text);
+  border-radius: 2px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+/* Animation när menyn är öppen */
+.hamburger-line.open:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Filter-sektion */
 .filters {
   display: flex;
   gap: 16px;
@@ -357,7 +393,6 @@ h1 {
 }
 
 /* Pagination */
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -386,15 +421,13 @@ h1 {
   color: white;
 }
 
-/* Aktiv sida */
-.pagination button:disabled:not(.pagination button:first-child):not(.pagination button:last-child) {
+.pagination button.active {
   background-color: #5ba4a4;
   border-color: #5ba4a4;
   color: white;
   cursor: default;
 }
 
-/* Previous och Next när de är disabled */
 .pagination button:first-child:disabled,
 .pagination button:last-child:disabled {
   background-color: var(--card-bg);
@@ -409,27 +442,54 @@ h1 {
   font-weight: 500;
 }
 
-.pagination button.active {
-  background-color: #5ba4a4;
-  border-color: #5ba4a4;
-  color: white;
-  cursor: default;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
+  .hamburger {
+    display: flex; /* visa hamburger på mobil */
+  }
+
+  .nav {
+    display: none; /* dölj nav som standard på mobil */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--header-bg);
+    border-top: 1px solid var(--border-color);
+    flex-direction: column;
+    padding: 16px 20px;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav-open {
+    display: flex; 
+  }
+
+  .nav a,
+  .nav .logout-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+  }
+
+  .nav .theme-toggle {
+  align-self: flex-start; 
+  padding: 12px 16px;
+}
+
   .job-list {
     grid-template-columns: 1fr;
   }
-  
+
   h1 {
     font-size: 2rem;
   }
-  
+
   .filters {
     flex-direction: column;
   }
-  
+
   .filters input,
   .filters select {
     width: 100%;
