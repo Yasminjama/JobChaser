@@ -57,24 +57,64 @@
 
 ### Lokal vs global state
 - När räcker lokal state (komponent-nivå) i React?
+Lokal state (useState) räcker när datan bara behövs inom en specifik komponent eller dess närmaste barn. Exempel är om ett inputfält är ifyllt, om en meny är öppen eller om en specifik knapp har klickats på.
+
 - Vilka problem uppstår när man behöver dela state mellan många komponenter?
+När många komponenter på olika platser i trädet behöver samma data (t.ex. användarens profilbild eller valuta-inställningar) blir det svårt att synkronisera dem om de har varsin lokal state. Om man ändrar datan på ett ställe uppdateras den inte på de andra.
+
 - Vad är "prop drilling" och varför är det problematiskt?
+Detta uppstår när en tvingas skicka ner props genom flera nivåer av komponenter som själva inte använder datan, bara för att nå ett barn långt ner i trädet.
+
+  - Varför det är problematiskt: Det gör koden svårläst, svår att underhålla och skapar ett hårt beroende mellan komponenterna. Om en ändrar datastrukturen högst upp måste en ändra i alla mellanliggande komponenter.
 
 ### useReducer
 - Vad är skillnaden mellan `useState` och `useReducer`?
+Skillnaden mellan useState och useReducer
+  - useState: Enklare, bra för enstaka värden (strängar, siffror, enkla booleans).
+
+  - useReducer: Mer strukturerat, används för komplex state-logik där nästa tillstånd beror på det föregående eller där flera värden hänger ihop.
+
 - När är `useReducer` ett bättre val än `useState`?
+Det är ett bättre val när en har många olika sätt att uppdatera en state (t.ex. en varukorg där en kan lägga till, ta bort, ändra antal och tömma). Istället för fem olika set-funktioner har man en central logik.
 - Vad är en "action" och en "reducer" i React-sammanhang?
+  - Action: Ett objekt som beskriver vad som ska hända, t.ex. { type: 'ADD_ITEM', payload: item }.
+
+  - Reducer: En funktion som tar emot nuvarande state och en action, och returnerar ett nytt state baserat på instruktionen.
+
 - Hur relaterar useReducer till Redux-mönstret?
+useReducer använder exakt samma mönster som Redux (Actions -> Dispatcher -> Reducer -> Store). Skillnaden är att useReducer är inbyggt i React och oftast används för lokal men komplex state, medan Redux är ett externt bibliotek för hela appens globala state.
 
 ### Context API vs Zustand
 - Vilka fördelar och nackdelar har Context API?
+  - Fördelar: Inbyggt i React (inga extra paket), perfekt för statisk data som sällan ändras (t.ex. "Dark Mode" eller språk).
+
+  - Nackdelar: Prestandaproblem. Om värdet i en Context ändras, renderas alla komponenter som konsumerar den om, även om de bara använder en liten del av datan.
+
 - Vilka fördelar har ett dedikerat state management-bibliotek som Zustand?
+  - Fördelar: Enklare syntax än Context (ingen "Provider-hell"), mycket snabbare prestanda eftersom komponenter bara renderas om när den specifika del av statet de "prenumererar" på ändras.
+
+  - Struktur: Allt sparas i en "Store" utanför komponentträdet.
+
 - När är det motiverat att införa globalt state i ett projekt?
+Det är motiverat när data delas av komponenter som inte har en direkt förälder-barn-relation, eller när "prop drilling" gör koden orimligt komplex.
 
 ### Auth-state i frontend
 - Varför är det viktigt att hantera auth-state globalt?
+Inloggningsstatus (user, isAuthenticated) behövs nästan överallt: i headern (för att visa namn), i sidofältet (för att visa profil), och av routern (för att neka åtkomst). Genom att ha det globalt har hela appen en och samma "källa till sanning".
+
 - Hur säkerställer man att skyddade routes verkligen är skyddade?
+Man skapar ofta en ProtectedRoute-komponent som omsluter de sidor som kräver inloggning.
+
+  - Komponenten kollar det globala auth-statet.
+
+  - Om användaren inte är inloggad körs en Maps (redirect) till inloggningssidan.
+
+  - Viktigt: Frontend-skydd är bara för användarvänlighet. Det riktiga skyddet sker alltid i backend genom att validera JWT-tokens vid varje API-anrop.
+
 - Vad händer om en token går ut medan användaren är aktiv i appen?
+Om en token (JWT) går ut medan användaren är aktiv, kommer nästa API-anrop att returnera 401 Unauthorized.
+
+  - Hantering: Appen bör ha en interceptor (i t.ex. Axios) som fångar upp 401-fel, rensar det globala auth-statet och skickar användaren till inloggningen, eller försöker förnya token automatiskt med en "refresh token".
 
 ## Extrauppgifter
 - Lägg till "favoritjobb" eller "sparade jobb" i Zustand-storen.

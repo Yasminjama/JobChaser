@@ -69,6 +69,22 @@
   - **Resource-based** – URL:er representerar resurser (t.ex. `/jobs`, `/users`).
 - Hur bör URL-strukturen se ut i ett RESTful API?
 
+REST (Representational State Transfer) är en arkitekturstil för att designa nätverksapplikationer.
+
+Viktiga principer
+- Stateless (Tillståndslöst): Servern sparar ingen information om tidigare förfrågningar. Varje enskilt anrop från klienten måste innehålla all data som behövs för att servern ska förstå och utföra begäran (t.ex. autentiseringstoken).
+
+- Uniform Interface: Ett enhetligt gränssnitt. Det innebär att man använder HTTP-metoder på ett standardiserat sätt och att URL-strukturen är förutsägbar.
+
+- Resource-based: Allt i API:et betraktas som resurser. Istället för att anropa funktioner (t.ex. /getUsers), pekar man på resurser (t.ex. /users).
+
+URL-struktur i ett RESTful API
+URL:er ska representera substantiv (resurser) i plural, inte verb (handlingar).
+
+- Bra: GET /jobs (Hämta alla jobb), GET /jobs/123 (Hämta ett specifikt jobb).
+
+- Dåligt: GET /getAllJobs, POST /createNewJob.
+
 ### HTTP-metoder
 - Vad är skillnaden mellan de olika HTTP-metoderna?
   - **GET** – Hämta data (idempotent, ingen sidoeffekt).
@@ -76,21 +92,63 @@
   - **PUT** – Ersätt hela resursen.
   - **PATCH** – Uppdatera delar av resursen.
   - **DELETE** – Ta bort resurs.
+
+Metoderna (verben) talar om för servern vad som ska göras med resursen.
+
+GET: Hämtar data. Ska inte förändra något på servern.
+
+POST: Skapar en helt ny resurs.
+
+PUT: Ersätter en befintlig resurs helt. Om du missar ett fält i din request kan det fältet raderas i databasen.
+
+PATCH: Uppdaterar endast delar av en resurs (t.ex. ändrar bara en användares e-post).
+
+DELETE: Tar bort en resurs.
 - Vad betyder "idempotent" och vilka metoder är idempotenta?
+Att en metod är idempotent betyder att om du gör samma anrop flera gånger efter varandra, blir slutresultatet på servern detsamma som om du bara gjort det en gång.
+
+Idempotenta metoder: GET, PUT, DELETE, HEAD.
+
+Inte idempotent: POST. (Om du trycker på "Skicka" fem gånger på ett formulär som använder POST, skapas sannolikt fem kopior i databasen).
 
 ### ORM och Drizzle
 - Vad är en ORM (Object-Relational Mapping) och varför används det?
+En ORM fungerar som en översättare mellan JavaScript-objekt och tabellerna i en SQL-databas.
 - Vilka fördelar ger Drizzle jämfört med att skriva rå SQL?
   - Typsäkerhet med TypeScript.
+  Tack vare TypeScript får man hjälp av editorn att skriva rätt fältnamn och datatyper.
   - Enklare att underhålla och refaktorera.
+  Man definierar sitt schema i kod. Om en ändrar ett fältnamn hittar TypeScript alla ställen där koden går sönder.
   - Skydd mot SQL-injection.
+  Drizzle hanterar parameterized queries automatiskt, vilket gör det svårt för hackare att injicera skadlig SQL-kod. 
   - Automatisk hantering av relationer.
+  "Automatisk hantering" betyder att en kan tänka i objekt och egenskaper (som man gör i JavaScript/TypeScript) istället för att tänka i rader och tabellkopplingar (SQL). Det minskar mängden kod man behöver skriva och minskar risken för att en glömmer bort att uppdatera en koppling någonstans.
+
 - Vad är nackdelarna med att använda en ORM?
+Abstraktionslager: Man tappar lite kontroll över den exakta SQL-koden som körs, vilket kan leda till mindre optimala frågor i sällsynta fall.
+
+Inlärningskurva: Man måste lära dig ORM-verktygets specifika syntax utöver vanlig SQL.
 
 ### Felhantering
 - Varför är korrekt felhantering viktigt i ett API?
+Korrekt felhantering är avgörande för att den som bygger frontend (klienten) ska veta vad som gick fel.
+
 - Hur bör felmeddelanden struktureras för att vara användbara för klienten?
+Ett bra felmeddelande bör inte bara ge en siffra, utan ett tydligt JSON-objekt:
+{ "error": "Invalid input", "message": "Email address is missing a '@' symbol." }
+
 - Vad är skillnaden mellan klientfel (4xx) och serverfel (5xx)?
+- 4xx (Klientfel): Felet ligger hos användaren eller koden som skickade förfrågan.
+
+  - 400 Bad Request: Felaktigt formaterad data.
+
+  - 401 Unauthorized: Du saknar behörighet/inloggning.
+
+  - 404 Not Found: Resursen finns inte.
+
+- 5xx (Serverfel): Klienten gjorde allt rätt, men servern kraschade eller stötte på ett oväntat problem.
+
+  - 500 Internal Server Error: Ett generellt fel på serverns sida.
 
 ## Extrauppgifter
 - Lägg till paginering på `GET /jobs` (t.ex. `?page=1&limit=10`).
