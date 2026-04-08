@@ -91,7 +91,13 @@ function JobsPage() {
   }, [textFilter, regionFilter, employmentType, requiresExperience]);
 
   if (loading) {
-    return <div className="app-container"><p>Laddar jobb...</p></div>;
+    return (
+      <div className= "app-container">
+        <div className="loader-container">
+          <div className="spinner"></div>
+        </div>
+      </div>
+    )
   }
 
   if (error) {
