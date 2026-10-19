@@ -32,6 +32,13 @@ body {
   box-sizing: border-box;
 }
 
+/* Mjuk övergång mellan dark och light mode för alla element */
+*,
+*::before,
+*::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
 /* Container för hela appen */
 .app-container {
   max-width: 1400px;
@@ -116,14 +123,46 @@ h1 {
 .theme-toggle {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  color: var(--header-text);
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   padding: 8px;
   transition: transform 0.2s;
 }
 
-.theme-toggle:hover {
-  transform: scale(1.2);
+/* Förstora ikonen, inte hela knappen (annars skjuts ikonen åt sidan på mobil) */
+.theme-toggle:hover svg {
+  scale: 1.2;
+}
+
+/* Båda ikonerna ligger ovanpå varandra och roterar/tonar över */
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+}
+
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon {
+  grid-area: 1 / 1;
+  transition: opacity 0.3s ease, transform 0.3s ease, scale 0.2s;
+}
+
+/* Ikonen visar vad ett klick byter TILL: light → måne, dark → sol */
+body.light .theme-toggle .moon-icon,
+body.dark .theme-toggle .sun-icon {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+body.light .theme-toggle .sun-icon {
+  opacity: 0;
+  transform: rotate(-180deg);
+}
+
+body.dark .theme-toggle .moon-icon {
+  opacity: 0;
+  transform: rotate(180deg);
 }
 
 /* Hamburger-knapp — dold på desktop */
@@ -178,7 +217,7 @@ h1 {
   font-size: 1rem;
   flex: 1;
   min-width: 200px;
-  transition: border-color 0.2s;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
   background-color: var(--card-bg);
   color: var(--text-color);
 }
@@ -265,7 +304,7 @@ h1 {
   padding: 24px;
   box-shadow: 0 4px 6px var(--shadow);
   border-left: 5px solid #5ba4a4;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -373,7 +412,7 @@ h1 {
   border: 2px solid var(--border-color);
   border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
   background-color: var(--card-bg);
   color: var(--text-color);
 }
@@ -477,7 +516,7 @@ h1 {
     right: 0;
     bottom: auto;       
     background-color: var(--header-bg);
-    border-top: 1px solid rgba(91, 164, 164, 0.3);
+    box-shadow: 0 4px 10px var(--shadow); /* skugga istället för border-linje */
     flex-direction: column;
     padding: 8px 0;     
     gap: 0;
@@ -491,6 +530,7 @@ h1 {
   .nav a,
   .nav .logout-btn,
   .nav .theme-toggle {
+    justify-items: start; /* ikonen till vänster, i linje med länkarna */
     width: 100%;
     padding: 12px 16px;
     border-radius: 6px;

@@ -2,12 +2,13 @@
 // Navigationskomponent som visas på alla sidor
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuthStore } from '../stores/authStore';
 import { useFilterStore } from '../stores/filterStore';
 
 function Header() {
-  const { theme, toggleTheme } = useTheme();
+  const { toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false); // håller koll på om menyn är öppen
 
@@ -75,7 +76,8 @@ function Header() {
             className="theme-toggle"
             aria-label="Toggle dark mode"
           >
-            {theme === 'light' ? '🌙' : '☀️'}
+            <Moon className="moon-icon" size={24} />
+            <Sun className="sun-icon" size={24} />
           </button>
         </nav>
       </div>
